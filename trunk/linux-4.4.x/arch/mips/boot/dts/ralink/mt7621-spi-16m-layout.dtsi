@@ -7,6 +7,7 @@
 		compatible = "jedec,spi-nor";
 		reg = <0>;
 		spi-max-frequency = <32000000>;
+        m25p,fast-read;
 
 		partition@0 {
 			label = "Bootloader";
@@ -25,17 +26,17 @@
 
 		partition@50000 {
 			label = "firmware";
-			reg = <0x50000 0xf30000>;
+			reg = <0x50000 0xFB0000>; /* 16MB */
 		};
 
-		partition@f80000 {
+		partition@1000000 {
 			label = "Storage";
-			reg = <0xf80000 0x80000>; /* 512K */
+			reg = <0x1000000 0x1000000>; /* 16MB */
 		};
 
 		partition@all {
 			label = "ALL";
-			reg = <0x0 0x1000000>;
+			reg = <0x0 0x2000000>; /* 32MB */
 		};
 	};
 };
