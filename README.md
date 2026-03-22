@@ -1,3 +1,5 @@
+感谢源码贡献者！此K2P固件自修改为32M+512M。
+
 # [Padavan 4.4 - The "Dave Täht Tribute" Edition](https://github.com/TW641/padavan-4.4)
 
 > **"When you miss Dave, modprobe sch_cake!"**
