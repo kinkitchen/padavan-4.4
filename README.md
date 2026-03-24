@@ -1,4 +1,4 @@
-感谢源码贡献者！此K2P固件自修改为32M+512M,torage,分区调整为 16M，firmware 调整为16M, TMP调整为100M
+# [感谢源码贡献者！此自用K2P固件适配32M+512M,storage分区调整为16M，firmware调整为16M, TMP调整为100M)
 
 # [Padavan 4.4 - The "Dave Täht Tribute" Edition](https://github.com/TW641/padavan-4.4)
 
