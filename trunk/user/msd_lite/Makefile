@@ -2,21 +2,38 @@ include $(ROOTDIR)/rules.mk
 
 PKG_NAME:=msd_lite
 PKG_SOURCE_DATE:=2025-05-02
-
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/rozhuk-im/msd_lite
 PKG_SOURCE_VERSION:=79a6c62c8fced6128a5e445ee110709b3b51bb78
-
 PKG_FIXUP:=autoreconf
 
-# 修复 INCLUDE_DIR 未定义导致的 /autotools.mk 错误
+# 定义 INCLUDE_DIR 解决 autotools.mk 路径问题
 INCLUDE_DIR := $(ROOTDIR)/include
 
-# 修复 CMake 找不到 PTHREAD_LIBRARY 的错误
-PKG_CMAKE_OPTS = -DPTHREAD_LIBRARY=-lpthread
-
 include $(INCLUDE_DIR)/package.mk
-include $(INCLUDE_DIR)/cmake.mk
+
+# 重写 Configure 步骤，添加 pthread 库路径
+define Build/Configure
+    mkdir -p $(PKG_BUILD_DIR)/build
+    (cd $(PKG_BUILD_DIR)/build; \
+        CFLAGS="$(TARGET_CFLAGS) $(EXTRA_CFLAGS)" \
+        CXXFLAGS="$(TARGET_CXXFLAGS) $(EXTRA_CXXFLAGS)" \
+        LDFLAGS="$(TARGET_LDFLAGS) $(EXTRA_LDFLAGS)" \
+        cmake \
+            -DCMAKE_TOOLCHAIN_FILE=$(TOOLCHAIN_DIR)/toolchain-$(CONFIG_LINUX_TARGET).cmake \
+            -DCMAKE_BUILD_TYPE=RELEASE \
+            -DPTHREAD_LIBRARY=-lpthread \
+            $(PKG_BUILD_DIR) \
+    )
+endef
+
+define Build/Compile
+    $(MAKE) -C $(PKG_BUILD_DIR)/build
+endef
+
+define Build/Install
+    # 不需要安装步骤
+endef
 
 $(eval $(call BuildPackage,msd_lite))
 
