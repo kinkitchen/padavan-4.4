@@ -9,8 +9,11 @@ PKG_SOURCE_VERSION:=79a6c62c8fced6128a5e445ee110709b3b51bb78
 
 PKG_FIXUP:=autoreconf
 
-# 定义 INCLUDE_DIR，解决 /autotools.mk 找不到的问题
+# 修复 INCLUDE_DIR 未定义导致的 /autotools.mk 错误
 INCLUDE_DIR := $(ROOTDIR)/include
+
+# 修复 CMake 找不到 PTHREAD_LIBRARY 的错误
+PKG_CMAKE_OPTS = -DPTHREAD_LIBRARY=-lpthread
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
