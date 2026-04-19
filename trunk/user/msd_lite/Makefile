@@ -1,40 +1,24 @@
-SRC_NAME=msd_lite
-THISDIR = $(shell pwd)
+include $(ROOTDIR)/rules.mk
 
-CFLAGS += -fno-unwind-tables -fno-asynchronous-unwind-tables -DSYS_pidfd_open=434
+PKG_NAME:=msd_lite
+PKG_SOURCE_DATE:=2025-05-02
 
-all: download_test config_test
-	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)/build
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://github.com/rozhuk-im/msd_lite
+PKG_SOURCE_VERSION:=79a6c62c8fced6128a5e445ee110709b3b51bb78
 
-download_test:
-	( if [ ! -d $(THISDIR)/$(SRC_NAME) ]; then \
-		git clone https://github.com/rozhuk-im/msd_lite.git ; \
-		cd $(SRC_NAME) ; \
-		git submodule update --init --recursive ; \
-		patch -p1 -i ../msd_lite.diff ; \
-		sed -i 's/-D__USE_GNU=1//g' CMakeLists.txt \
-		sed -i '/if (0 == (req->flags & HTTP_SRV_RD_F_HOST_IS_LOCAL)) {/,+3d' src/msd_lite.c; \
-		cd src/liblcb ; \
-		patch -p1 -i ../../../liblcb_msd_lite.diff ; \
-		cd ../../; \
-	fi )
+PKG_FIXUP:=autoreconf
 
-config_test:
-	( if [ -f ./config_done ]; then \
-		echo "the same configuration"; \
-	else \
-		make configure && touch config_done; \
-	fi )
+# 定义 INCLUDE_DIR，解决 /autotools.mk 找不到的问题
+INCLUDE_DIR := $(ROOTDIR)/include
 
-configure:
-	( mkdir -p $(SRC_NAME)/build && cd $(SRC_NAME)/build ; \
-	cmake -DCMAKE_TOOLCHAIN_FILE=../../cross-mipsel-linux.cmake -DCMAKE_BUILD_TYPE=RELEASE -DBUILD_CPU_MODE=32 .. \
-	)
+include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/cmake.mk
 
-clean:
-	rm -rf $(SRC_NAME)/build
-	rm -f config_done
+$(eval $(call BuildPackage,msd_lite))
 
 romfs:
-	$(ROMFSINST) $(THISDIR)/$(SRC_NAME)/build/src/msd_lite /usr/bin/msd_lite
-	$(ROMFSINST) $(THISDIR)/msd_lite.conf /etc_ro/msd_lite.conf
+	$(INSTALL_DIR) $(ROMFSDIR)/usr/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/msd_lite $(ROMFSDIR)/usr/bin/msd_lite
+	$(INSTALL_DIR) $(ROMFSDIR)/etc_ro
+	$(INSTALL_CONF) ./msd_lite.conf $(ROMFSDIR)/etc_ro/msd_lite.conf
