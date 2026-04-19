@@ -18,7 +18,9 @@ define Build/Configure
 		CXXFLAGS="$(TARGET_CXXFLAGS) $(EXTRA_CXXFLAGS)" \
 		LDFLAGS="$(TARGET_LDFLAGS) $(EXTRA_LDFLAGS)" \
 		cmake \
-			-DCMAKE_TOOLCHAIN_FILE=$(TOOLCHAIN_DIR)/toolchain-$(CONFIG_LINUX_TARGET).cmake \
+			-DCMAKE_C_COMPILER=$(TOOLCHAIN_DIR)/bin/mipsel-linux-gcc \
+			-DCMAKE_CXX_COMPILER=$(TOOLCHAIN_DIR)/bin/mipsel-linux-g++ \
+			-DCMAKE_SYSTEM_NAME=Linux \
 			-DCMAKE_BUILD_TYPE=RELEASE \
 			-DPTHREAD_LIBRARY=-lpthread \
 			$(PKG_BUILD_DIR) \
@@ -36,6 +38,6 @@ $(eval $(call BuildPackage,msd_lite))
 
 romfs:
 	$(INSTALL_DIR) $(ROMFSDIR)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/msd_lite $(ROMFSDIR)/usr/bin/msd_lite
+	$INSTALL_BIN) $(PKG_BUILD_DIR)/src/msd_lite $(ROMFSDIR)/usr/bin/msd_lite
 	$(INSTALL_DIR) $(ROMFSDIR)/etc_ro
 	$(INSTALL_CONF) ./msd_lite.conf $(ROMFSDIR)/etc_ro/msd_lite.conf
