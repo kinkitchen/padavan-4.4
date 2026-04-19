@@ -1,4 +1,4 @@
-include $(INCLUDE_DIR)/rules.mk
+include $(ROOTDIR)/rules.mk
 
 PKG_NAME:=msd_lite
 PKG_SOURCE_DATE:=2025-05-02
