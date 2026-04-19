@@ -9,8 +9,8 @@ PKG_SOURCE_VERSION:=79a6c62c8fced6128a5e445ee110709b3b51bb78
 
 PKG_FIXUP:=autoreconf
 
-include $(TOPDIR)/include/package.mk
-include $(TOPDIR)/include/cmake.mk
+include /opt/rt-n56u/trunk/include/package.mk
+include /opt/rt-n56u/trunk/include/cmake.mk
 
 $(eval $(call BuildPackage,msd_lite))
 
