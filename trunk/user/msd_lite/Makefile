@@ -22,6 +22,10 @@ EXTRA_FLAGS = -D_GNU_SOURCE \
               -DHAVE_ACCEPT4=1
 
 define Build/Configure
+	# 打补丁：修复 pidfd_open 系统调用缺失问题
+	if [ -f $(PKG_BUILD_DIR)/src/liblcb/src/threadpool/threadpool.c ]; then \
+		sed -i '/^static int pidfd_open/,/^}/c static int pidfd_open(int pid, unsigned int flags) { errno = ENOSYS; return -1; }' $(PKG_BUILD_DIR)/src/liblcb/src/threadpool/threadpool.c; \
+	fi
 	mkdir -p $(PKG_BUILD_DIR)/build
 	(cd $(PKG_BUILD_DIR)/build; \
 		CFLAGS="$(TARGET_CFLAGS) $(EXTRA_CFLAGS) $(EXTRA_FLAGS)" \
