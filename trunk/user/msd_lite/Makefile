@@ -7,32 +7,29 @@ PKG_SOURCE_URL:=https://github.com/rozhuk-im/msd_lite
 PKG_SOURCE_VERSION:=79a6c62c8fced6128a5e445ee110709b3b51bb78
 PKG_FIXUP:=autoreconf
 
-# 定义 INCLUDE_DIR 解决 autotools.mk 路径问题
 INCLUDE_DIR := $(ROOTDIR)/include
 
 include $(INCLUDE_DIR)/package.mk
 
-# 重写 Configure 步骤，添加 pthread 库路径
 define Build/Configure
-    mkdir -p $(PKG_BUILD_DIR)/build
-    (cd $(PKG_BUILD_DIR)/build; \
-        CFLAGS="$(TARGET_CFLAGS) $(EXTRA_CFLAGS)" \
-        CXXFLAGS="$(TARGET_CXXFLAGS) $(EXTRA_CXXFLAGS)" \
-        LDFLAGS="$(TARGET_LDFLAGS) $(EXTRA_LDFLAGS)" \
-        cmake \
-            -DCMAKE_TOOLCHAIN_FILE=$(TOOLCHAIN_DIR)/toolchain-$(CONFIG_LINUX_TARGET).cmake \
-            -DCMAKE_BUILD_TYPE=RELEASE \
-            -DPTHREAD_LIBRARY=-lpthread \
-            $(PKG_BUILD_DIR) \
-    )
+	mkdir -p $(PKG_BUILD_DIR)/build
+	(cd $(PKG_BUILD_DIR)/build; \
+		CFLAGS="$(TARGET_CFLAGS) $(EXTRA_CFLAGS)" \
+		CXXFLAGS="$(TARGET_CXXFLAGS) $(EXTRA_CXXFLAGS)" \
+		LDFLAGS="$(TARGET_LDFLAGS) $(EXTRA_LDFLAGS)" \
+		cmake \
+			-DCMAKE_TOOLCHAIN_FILE=$(TOOLCHAIN_DIR)/toolchain-$(CONFIG_LINUX_TARGET).cmake \
+			-DCMAKE_BUILD_TYPE=RELEASE \
+			-DPTHREAD_LIBRARY=-lpthread \
+			$(PKG_BUILD_DIR) \
+	)
 endef
 
 define Build/Compile
-    $(MAKE) -C $(PKG_BUILD_DIR)/build
+	$(MAKE) -C $(PKG_BUILD_DIR)/build
 endef
 
 define Build/Install
-    # 不需要安装步骤
 endef
 
 $(eval $(call BuildPackage,msd_lite))
